@@ -1,0 +1,11 @@
+upstream upstream-database {
+    server database:5432;
+}
+
+# Database
+server {
+    listen *:5432;
+    server_name $DATABASE_HOSTNAME;
+
+    proxy_pass upstream-database;
+}

@@ -1,0 +1,59 @@
+include mime.types;
+
+upstream upstream-app-axum-sqlx {
+    server app-axum-sqlx:80;
+}
+
+upstream upstream-aspnetcore-ef {
+    server app-axum-sqlx:80;
+}
+
+upstream upstream-echo-sql {
+    server app-axum-sqlx:80;
+}
+
+upstream upstream-adminer {
+    server adminer:8080;
+}
+
+# App (Axum-SQLx)
+server {
+    listen *:80;
+    server_name $APP_AXUM_SQLX_HOSTNAME;
+
+    location / {
+        proxy_pass http://upstream-app-axum-sqlx;
+    }
+}
+
+# # App (ASP.NET Core EF)
+server {
+    listen *:80;
+    server_name $APP_ASPNETCORE_EF_HOSTNAME;
+
+    location / {
+        proxy_pass http://upstream-aspnetcore-ef;
+    }
+}
+
+# # App (Echo SQL)
+server {
+    listen *:80;
+    server_name $APP_ECHO_SQL_HOSTNAME;
+
+    location / {
+        proxy_pass http://upstream-echo-sql;
+    }
+}
+
+
+
+# Adminer
+server {
+    listen *:80;
+    server_name $ADMINER_HOSTNAME;
+
+    location / {
+        proxy_pass http://upstream-adminer;
+    }
+}

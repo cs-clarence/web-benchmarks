@@ -1,0 +1,30 @@
+services:
+  database:
+    image: ${DOCKER_IMAGE_PREFIX:-}database:latest
+    restart: unless-stopped
+    volumes:
+      - database-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-root}
+      - POSTGRES_MULTIPLE_DB=${POSTGRES_MULTIPLE_DB:-postgres,postgres_dev}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-password}
+    networks:
+      - main-network
+    ports:
+      - "5432:5432"
+
+  adminer:
+    image: adminer:latest
+    restart: unless-stopped
+    networks:
+      - main-network
+    ports:
+      - "8080:8080"
+      
+volumes:
+  database-data:
+
+networks:
+  main-network:
+    attachable: true
+    driver: bridge

@@ -1,0 +1,11 @@
+{
+    "$schema": "https://turbo.build/schema.json",
+    "extends": ["//"],
+    "tasks": {
+        "image:build": {
+            "dependsOn": ["^image:build", "migrate:diff"],
+            "cache": true,
+            "inputs": ["src/**/*.*"]
+        }
+    }
+}

@@ -1,0 +1,7 @@
+{
+    "name": "@repo/axum-sqlx",
+    "scripts": {
+        "image:build": "with-env 'docker build --build-arg PACKAGE_NAME=axum-sqlx -t ${DOCKER_IMAGE_PREFIX}axum-sqlx:latest ../../ -f ../../Dockerfile'",
+        "image:push": "with-env 'docker push ${DOCKER_IMAGE_PREFIX}axum-sqlx:latest'"
+    }
+}

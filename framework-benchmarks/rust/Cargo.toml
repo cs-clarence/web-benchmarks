@@ -1,0 +1,25 @@
+[workspace]
+resolver = "2"
+members = ["./apps/*"]
+
+[workspace.package]
+edition = "2021"
+rust-version = "1.83.0"
+
+[workspace.dependencies]
+eyre = { version = "^0.6.12" }
+axum = { version = "^0.8.1", features = ["macros"] }
+sqlx = { version = "^0.8.3", features = ["runtime-tokio-rustls", "postgres"] }
+serde = { version = "1.0.217", features = ["derive", "rc", "alloc"] }
+tokio = { version = "1.42.0", features = [
+    "rt",
+    "rt-multi-thread",
+    "tracing",
+    "sync",
+    "fs",
+    "net",
+    "socket2",
+    "time",
+    "macros",
+    "signal"
+] }

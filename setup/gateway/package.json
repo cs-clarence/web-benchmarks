@@ -1,0 +1,8 @@
+{
+    "name": "@repo/gateway",
+    "version": "0.0.0-semantically-released",
+    "scripts": {
+        "image:build": "with-env 'docker build -t ${DOCKER_IMAGE_PREFIX}gateway:latest ./ -f ./Dockerfile'",
+        "image:push": "with-env 'docker push ${DOCKER_IMAGE_PREFIX}gateway:latest'"
+    }
+}

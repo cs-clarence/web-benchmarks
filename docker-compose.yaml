@@ -1,0 +1,97 @@
+services:
+  database:
+    image: ${DOCKER_IMAGE_PREFIX:-}database:latest
+    restart: unless-stopped
+    volumes:
+      - database-data:/var/lib/postgresql/data
+    env_file:
+      - path: .env.database
+        required: false
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:?must be set}
+      - POSTGRES_MULTIPLE_DB=${POSTGRES_MULTIPLE_DB:?must be set}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?must be set}
+    networks:
+      - main-network
+  
+  database-migrations:
+    image: ${DOCKER_IMAGE_PREFIX:-}database-migrations:latest
+    command: 
+      - migrate
+      - apply
+      - --url
+      - ${DATABASE_URL:?must be set}
+    env_file:
+      - path: .env.database-migrations
+        required: false
+    depends_on:
+      - database
+    networks:
+      - main-network
+  
+  adminer:
+    image: adminer:latest
+    restart: unless-stopped
+    networks:
+      - main-network
+  
+  gateway:
+    image: ${DOCKER_IMAGE_PREFIX:-}gateway:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "5432:5432"
+    env_file:
+      - path: .env.gateway
+        required: false
+    environment:
+      - APP_AXUM_SQLX_HOSTNAME=${GATEWAY_APP_AXUM_SQLX_HOSTNAME:?must be set}
+      - APP_ASPNETCORE_EF_HOSTNAME=${GATEWAY_APP_ASPNETCORE_EF_HOSTNAME:?must be set}
+      - APP_ECHO_SQL_HOSTNAME=${GATEWAY_APP_ECHO_SQL_HOSTNAME:?must be set}
+      - ADMINER_HOSTNAME=${GATEWAY_ADMINER_HOSTNAME:?must be set}
+      - DATABASE_HOSTNAME=${GATEWAY_DATABASE_HOSTNAME:?must be set}
+    networks:
+      - main-network
+    depends_on:
+      - database
+      - database-migrations
+      - adminer
+      - app-axum-sqlx
+  
+  app-axum-sqlx:
+    image: ${DOCKER_IMAGE_PREFIX:-}axum-sqlx:latest
+    restart: unless-stopped
+    env_file:
+      - path: .env.app-axum-sqlx
+        required: false
+    environment:
+      - DATABASE_HOSTNAME=${DATABASE_HOSTNAME:?must be set}
+      - DATABASE_PORT=${DATABASE_PORT:?must be set}
+      - DATABASE_USERNAME=${DATABASE_USERNAME:?must be set}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:?must be set}
+      - DATABASE_NAME=${DATABASE_NAME:?must be set}
+    networks:
+      - main-network
+    depends_on:
+      - database
+      - database-migrations
+  
+  # app-aspnetcore-ef:
+  #   image: ${DOCKER_IMAGE_PREFIX:-}aspnetcore-ef:latest
+  #   restart: unless-stopped
+  #   networks:
+  #     - main-network
+  
+  # app-echo-sql:
+  #   image: ${DOCKER_IMAGE_PREFIX:-}echo-sql:latest
+  #   restart: unless-stopped
+    
+      
+volumes:
+  database-data:
+
+networks:
+  main-network:
+    attachable: true
+    driver: bridge
