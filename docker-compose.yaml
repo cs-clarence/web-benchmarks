@@ -22,6 +22,7 @@ services:
       - apply
       - --url
       - ${DATABASE_URL:?must be set}
+    restart: on-failure
     env_file:
       - path: .env.database-migrations
         required: false
@@ -43,6 +44,7 @@ services:
     env_file:
       - path: .env.database-seeder
         required: false
+    restart: on-failure
     environment:
       - DATABASE_HOSTNAME=${DATABASE_HOSTNAME:?must be set}
       - DATABASE_PORT=${DATABASE_PORT:?must be set}
