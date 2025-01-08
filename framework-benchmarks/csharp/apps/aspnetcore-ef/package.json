@@ -1,0 +1,7 @@
+{
+    "name": "@repo/aspnetcore-ef",
+    "scripts": {
+        "image:build": "with-env -- 'docker build --build-arg PROJECT_PATH=apps/aspnetcore-ef --build-arg ASSEMBLY_PATH=AspNetCoreEf.dll -t ${DOCKER_IMAGE_PREFIX}aspnetcore-ef:latest ../../ -f ../../Dockerfile'",
+        "image:push": "with-env -- 'docker push ${DOCKER_IMAGE_PREFIX}aspnetcore-ef:latest'"
+    }
+}

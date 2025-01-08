@@ -5,7 +5,7 @@ upstream upstream-app-axum-sqlx {
 }
 
 upstream upstream-aspnetcore-ef {
-    server app-axum-sqlx:80;
+    server app-aspnetcore-ef:80;
 }
 
 upstream upstream-echo-sql {

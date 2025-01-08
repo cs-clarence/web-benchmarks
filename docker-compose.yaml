@@ -78,6 +78,8 @@ services:
       - database-migrations
       - adminer
       - app-axum-sqlx
+      - app-aspnetcore-ef
+      - app-echo-sql
 
   
   app-axum-sqlx:
@@ -116,11 +118,19 @@ services:
       - database-seeder
 
     
-  # app-aspnetcore-ef:
-  #   image: ${DOCKER_IMAGE_PREFIX:-}aspnetcore-ef:latest
-  #   restart: unless-stopped
-  #   networks:
-  #     - main-network
+  app-aspnetcore-ef:
+    image: ${DOCKER_IMAGE_PREFIX:-}aspnetcore-ef:latest
+    restart: unless-stopped
+    env_file:
+      - path: .env.app-echo-sql
+        required: false
+    environment:
+      - ConnectionStrings__Default=${ConnectionStrings__Default:?must be set}
+      - ASPNETCORE_HTTP_PORTS=${ASPNETCORE_HTTP_PORTS:?must be set}
+    networks:
+      - main-network
+    depends_on:
+      - database-seeder
       
 volumes:
   database-data:
