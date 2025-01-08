@@ -1,0 +1,7 @@
+{
+    "extends": ["@rencedm112/tsconfig/base.json", "@rencedm112/tsconfig/node.json"],
+    "compilerOptions": {
+        "moduleResolution": "bundler",
+        "types": ["bun-types"]
+    }
+}

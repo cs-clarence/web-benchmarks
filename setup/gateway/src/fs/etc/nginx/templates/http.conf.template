@@ -9,7 +9,7 @@ upstream upstream-aspnetcore-ef {
 }
 
 upstream upstream-echo-sql {
-    server app-axum-sqlx:80;
+    server app-echo-sql:80;
 }
 
 upstream upstream-adminer {

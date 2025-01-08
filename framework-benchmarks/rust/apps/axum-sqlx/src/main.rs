@@ -4,6 +4,7 @@ use sqlx::{prelude::FromRow, PgPool};
 use tokio::signal;
 
 #[derive(Serialize, FromRow)]
+#[serde(rename_all = "camelCase")]
 struct User {
     user_name: String,
     email_address: String,

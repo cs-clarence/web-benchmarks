@@ -2,10 +2,11 @@
     "name": "@repo/database-migrations",
     "version": "0.0.0-semantically-released",
     "scripts": {
-        "schema:apply": "with-env 'atlas schema apply --auto-approve --env local'",
-        "schema:clean": "with-env 'atlas schema clean --auto-approve --env local'",
-        "migrate:diff": "with-env 'atlas migrate diff --env local'",
-        "image:build" : "with-env 'docker build -t ${DOCKER_IMAGE_PREFIX}database-migrations:latest ./ -f ./Dockerfile'",
-        "image:push": "with-env 'docker push ${DOCKER_IMAGE_PREFIX}database-migrations:latest'"
+        "schema:apply": "with-env -- 'atlas schema apply --auto-approve --env local'",
+        "schema:clean": "with-env -- 'atlas schema clean --auto-approve --env local'",
+        "migrate:diff": "with-env -- 'atlas migrate diff --env local'",
+        "migrate:apply": "with-env -- 'atlas migrate apply --env local'",
+        "image:build" : "with-env -- 'docker build -t ${DOCKER_IMAGE_PREFIX}database-migrations:latest ./ -f ./Dockerfile'",
+        "image:push": "with-env -- 'docker push ${DOCKER_IMAGE_PREFIX}database-migrations:latest'"
     }
 }

@@ -14,6 +14,7 @@ services:
     networks:
       - main-network
   
+  
   database-migrations:
     image: ${DOCKER_IMAGE_PREFIX:-}database-migrations:latest
     command: 
@@ -28,12 +29,31 @@ services:
       - database
     networks:
       - main-network
+
   
   adminer:
     image: adminer:latest
     restart: unless-stopped
     networks:
       - main-network
+
+
+  database-seeder:
+    image: ${DOCKER_IMAGE_PREFIX:-}database-seeder:latest
+    env_file:
+      - path: .env.database-seeder
+        required: false
+    environment:
+      - DATABASE_HOSTNAME=${DATABASE_HOSTNAME:?must be set}
+      - DATABASE_PORT=${DATABASE_PORT:?must be set}
+      - DATABASE_USERNAME=${DATABASE_USERNAME:?must be set}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:?must be set}
+      - DATABASE_NAME=${DATABASE_NAME:?must be set}
+    networks:
+      - main-network
+    depends_on:
+      - database-migrations
+
   
   gateway:
     image: ${DOCKER_IMAGE_PREFIX:-}gateway:latest
@@ -58,6 +78,7 @@ services:
       - database-migrations
       - adminer
       - app-axum-sqlx
+
   
   app-axum-sqlx:
     image: ${DOCKER_IMAGE_PREFIX:-}axum-sqlx:latest
@@ -74,19 +95,32 @@ services:
     networks:
       - main-network
     depends_on:
-      - database
-      - database-migrations
+      - database-seeder
+
   
+  app-echo-sql:
+    image: ${DOCKER_IMAGE_PREFIX:-}echo-sql:latest
+    restart: unless-stopped
+    env_file:
+      - path: .env.app-echo-sql
+        required: false
+    environment:
+      - DATABASE_HOSTNAME=${DATABASE_HOSTNAME:?must be set}
+      - DATABASE_PORT=${DATABASE_PORT:?must be set}
+      - DATABASE_USERNAME=${DATABASE_USERNAME:?must be set}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:?must be set}
+      - DATABASE_NAME=${DATABASE_NAME:?must be set}
+    networks:
+      - main-network
+    depends_on:
+      - database-seeder
+
+    
   # app-aspnetcore-ef:
   #   image: ${DOCKER_IMAGE_PREFIX:-}aspnetcore-ef:latest
   #   restart: unless-stopped
   #   networks:
   #     - main-network
-  
-  # app-echo-sql:
-  #   image: ${DOCKER_IMAGE_PREFIX:-}echo-sql:latest
-  #   restart: unless-stopped
-    
       
 volumes:
   database-data:

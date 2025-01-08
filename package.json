@@ -4,11 +4,14 @@
     "private": true,
     "workspaces": [
         "setup/*",
-        "framework-benchmarks/*/*/*"
+        "framework-benchmarks/rust/*/*",
+        "framework-benchmarks/go/*/*",
+        "framework-benchmarks/csharp/*/*"
     ],
     "devDependencies": {
         "@rencedm112/biome-config": "^1.0.0",
-        "turbo": "^2.3.3"
+        "turbo": "^2.3.3",
+        "@rencedm112/with-env": "^0.0.43"
     },
     "packageManager": "bun@1.1.42"
 }

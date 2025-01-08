@@ -30,6 +30,15 @@
       "inputs": [
         "src/**/*.*"
       ]
+    },
+    "migrate:apply": {
+      "dependsOn": [
+        "^migrate:apply"
+      ],
+      "cache": true,
+      "inputs": [
+        "src/**/*.*"
+      ]
     }
   }
 }

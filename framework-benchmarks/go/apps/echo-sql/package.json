@@ -1,0 +1,8 @@
+{
+    "name": "@repo/echo-sql",
+    "version": "0.0.0-semantically-released",
+    "scripts": {
+        "image:build": "with-env -- 'docker build --build-arg PACKAGE_NAME=echo-sql -t ${DOCKER_IMAGE_PREFIX}echo-sql:latest -f ../../Dockerfile ../../'",
+        "image:push": "with-env -- 'docker push ${DOCKER_IMAGE_PREFIX}echo-sql:latest'"
+    }
+}
