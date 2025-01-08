@@ -1,4 +1,6 @@
 .env.local
 .env.**.local
+!.env.example
+!.env.*.example
 .turbo
 node_modules
