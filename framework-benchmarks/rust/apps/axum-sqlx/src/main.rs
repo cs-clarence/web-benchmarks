@@ -28,7 +28,7 @@ async fn get_users(State(pool): State<PgPool>) -> impl IntoResponse {
     }
 }
 
-#[tokio::main]
+#[tokio::main(flavor = "multi_thread")]
 async fn main() -> eyre::Result<()> {
     let username = std::env::var("DATABASE_USERNAME").unwrap_or_else(|_| "root".to_string());
     let password = std::env::var("DATABASE_PASSWORD").unwrap_or_else(|_| "password".to_string());

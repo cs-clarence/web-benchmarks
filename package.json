@@ -2,6 +2,9 @@
     "name": "@repo/root",
     "version": "0.0.0-semantically-released",
     "private": true,
+    "scripts": {
+        "copy-to-server": "with-env -- 'scp ./docker-compose.yaml ./.env.local ${SERVER_USERNAME}@${SERVER_HOST}:${SERVER_COPY_PATH}'"
+    },
     "workspaces": [
         "setup/*",
         "framework-benchmarks/rust/*/*",
