@@ -13,6 +13,14 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?must be set}
     networks:
       - main-network
+    deploy:
+      resources:
+        limits:
+          cpus: '${DATABASE_CPUS_LIMIT:-2}'
+          memory: ${DATABASE_MEMORY_LIMIT:-1G}
+        reservations:
+          cpus: '${DATABASE_CPUS_RESERVATION:-0.25}'
+          memory: ${DATABASE_MEMORY_RESERVATION:-256M}
 
   database-migrations:
     image: ${DOCKER_IMAGE_PREFIX:-}database-migrations:latest
@@ -80,6 +88,14 @@ services:
       - app-axum-sqlx
       - app-aspnetcore-ef
       - app-echo-sql
+    deploy:
+      resources:
+        limits:
+          cpus: '${GATEWAY_CPUS_LIMIT:-1}'
+          memory: ${GATEWAY_MEMORY_LIMIT:-1G}
+        reservations:
+          cpus: '${GATEWAY_CPUS_RESERVATION:-0.25}'
+          memory: ${GATEWAY_MEMORY_RESERVATION:-256M}
 
   app-axum-sqlx:
     image: ${DOCKER_IMAGE_PREFIX:-}axum-sqlx:latest

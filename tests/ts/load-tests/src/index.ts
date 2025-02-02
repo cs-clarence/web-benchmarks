@@ -4,8 +4,8 @@ import type { Options } from "k6/options";
 export const options: Options = {
     discardResponseBodies: true,
     insecureSkipTLSVerify: true,
-    vus: 220,
-    duration: "30s",
+    vus: 100,
+    duration: "2.5m",
     thresholds: {
         http_req_duration: ["p(99)<3000"],
     },

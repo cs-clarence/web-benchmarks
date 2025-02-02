@@ -4,7 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("Default");
 
 // Configure the database context with EF Core and a connection string
-builder.Services.AddDbContext<AppDbContext>(options =>
+builder.Services.AddDbContextPool<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 var app = builder.Build();
@@ -26,7 +26,22 @@ app.MapGet("/users",
         return Results.Ok(users);
     });
 
+app.MapGet("/factorial/{n}",
+    (ulong n) =>
+        Task.FromResult(Results.Ok(Factorial(n))));
+
 app.Run();
+return;
+
+ulong Factorial(ulong n)
+{
+    if (n == 0)
+    {
+        return 1;
+    }
+
+    return n * Factorial(n - 1);
+}
 
 public class AppDbContext(DbContextOptions<AppDbContext> options)
     : DbContext(options)

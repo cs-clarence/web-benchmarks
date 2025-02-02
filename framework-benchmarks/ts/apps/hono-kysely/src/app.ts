@@ -3,6 +3,13 @@ import { database } from "$/database";
 
 const app = new Hono();
 
+function factorial(n: bigint): bigint {
+    if (n === 0n) {
+        return 1n;
+    }
+    return n * factorial(n - 1n);
+}
+
 app.get("/users", async (c) => {
     const users = await database
         .selectFrom("users")
@@ -15,6 +22,11 @@ app.get("/users", async (c) => {
         .execute();
 
     return c.json(users);
+});
+
+app.get("/factorial/:n", async (c) => {
+    const n = Number(c.req.param("n"));
+    return c.json(factorial(BigInt(n)));
 });
 
 export default {

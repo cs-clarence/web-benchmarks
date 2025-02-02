@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	_ "github.com/lib/pq" // PostgreSQL driver
@@ -46,6 +47,13 @@ func getUsers(db *sql.DB) echo.HandlerFunc {
 	}
 }
 
+func factorial(n uint64) uint64 {
+	if n == 0 {
+		return 1
+	}
+	return n * factorial(n - 1)
+}
+
 func main() {
 	dbHost := os.Getenv("DATABASE_HOSTNAME")
 	dbUsername := os.Getenv("DATABASE_USERNAME")
@@ -61,6 +69,13 @@ func main() {
 
 	e := echo.New()
 	e.GET("/users", getUsers(db))
+	e.GET("/factorial/:n", func(c echo.Context) error {
+		n, err := strconv.Atoi(c.Param("n"))
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, createInternalServerError(err))
+		}
+		return c.JSON(http.StatusOK, factorial(n))
+	})
 
 	log.Println("Server started at http://0.0.0.0:80")
 	if err := e.Start("0.0.0.0:80"); err != nil {

@@ -1,17 +1,24 @@
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Dapper;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("Default");
 
+
 // Configure the database context with EF Core and a connection string
-builder.Services.AddDbContext<AppDbContext>(options =>
+builder.Services.AddDbContextPool<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 var app = builder.Build();
 
 app.MapGet("/users",
-    async (AppDbContext dbContext, CancellationToken cancellationToken) =>
+    async (AppDbContext dbContext) =>
     {
         var dbConnection = dbContext.Database.GetDbConnection();
         var users = await dbConnection.QueryAsync<UserDto>(
@@ -27,7 +34,23 @@ app.MapGet("/users",
         return Results.Ok(users);
     });
 
+app.MapGet("/factorial/{n}",
+    (ulong n) =>
+        Task.FromResult(Results.Ok(Factorial(n))));
+
+
 app.Run();
+return;
+
+ulong Factorial(ulong n)
+{
+    if (n == 0)
+    {
+        return 1;
+    }
+
+    return n * Factorial(n - 1);
+}
 
 public class AppDbContext(DbContextOptions<AppDbContext> options)
     : DbContext(options)
@@ -49,6 +72,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         base.OnModelCreating(modelBuilder);
     }
 }
+
 
 public class User
 {

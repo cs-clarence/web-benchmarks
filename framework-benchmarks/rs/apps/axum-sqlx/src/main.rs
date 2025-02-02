@@ -1,4 +1,4 @@
-use axum::{extract::State, http::StatusCode, response::IntoResponse, routing::get, Json, Router};
+use axum::{extract::{State, Path}, http::StatusCode, response::IntoResponse, routing::get, Json, Router};
 use serde::Serialize;
 use sqlx::{prelude::FromRow, PgPool};
 use tokio::signal;
@@ -28,6 +28,18 @@ async fn get_users(State(pool): State<PgPool>) -> impl IntoResponse {
     }
 }
 
+fn factorial(n: u64) -> u64 {
+    if n == 0 {
+        1
+    } else {
+        n * factorial(n - 1)
+    }
+}
+
+async fn get_factorial(Path(n): Path<u64>) -> impl IntoResponse {
+    Json(factorial(n)).into_response()
+}
+
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> eyre::Result<()> {
     let username = std::env::var("DATABASE_USERNAME").unwrap_or_else(|_| "root".to_string());
@@ -40,6 +52,7 @@ async fn main() -> eyre::Result<()> {
 
     let app = Router::new()
         .route("/users", get(get_users))
+        .route("/factorial/{n}", get(get_factorial))
         .with_state(pool);
 
     let addr = tokio::net::TcpListener::bind("0.0.0.0:80").await?;
