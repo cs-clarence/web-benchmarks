@@ -13,11 +13,10 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?must be set}
     networks:
       - main-network
-  
-  
+
   database-migrations:
     image: ${DOCKER_IMAGE_PREFIX:-}database-migrations:latest
-    command: 
+    command:
       - migrate
       - apply
       - --url
@@ -31,13 +30,11 @@ services:
     networks:
       - main-network
 
-  
   adminer:
     image: adminer:latest
     restart: unless-stopped
     networks:
       - main-network
-
 
   database-seeder:
     image: ${DOCKER_IMAGE_PREFIX:-}database-seeder:latest
@@ -56,7 +53,6 @@ services:
     depends_on:
       - database-migrations
 
-  
   gateway:
     image: ${DOCKER_IMAGE_PREFIX:-}gateway:latest
     restart: unless-stopped
@@ -70,7 +66,9 @@ services:
     environment:
       - APP_AXUM_SQLX_HOSTNAME=${GATEWAY_APP_AXUM_SQLX_HOSTNAME:?must be set}
       - APP_ASPNETCORE_EF_HOSTNAME=${GATEWAY_APP_ASPNETCORE_EF_HOSTNAME:?must be set}
+      - APP_ASPNETCORE_DAPPER_HOSTNAME=${GATEWAY_APP_ASPNETCORE_DAPPER_HOSTNAME:?must be set}
       - APP_ECHO_SQL_HOSTNAME=${GATEWAY_APP_ECHO_SQL_HOSTNAME:?must be set}
+      - APP_HONO_KYSELY_HOSTNAME=${GATEWAY_APP_HONO_KYSELY_HOSTNAME:?must be set}
       - ADMINER_HOSTNAME=${GATEWAY_ADMINER_HOSTNAME:?must be set}
       - DATABASE_HOSTNAME=${GATEWAY_DATABASE_HOSTNAME:?must be set}
     networks:
@@ -83,7 +81,6 @@ services:
       - app-aspnetcore-ef
       - app-echo-sql
 
-  
   app-axum-sqlx:
     image: ${DOCKER_IMAGE_PREFIX:-}axum-sqlx:latest
     restart: unless-stopped
@@ -100,8 +97,18 @@ services:
       - main-network
     depends_on:
       - database-seeder
+    ports:
+      - "3000:80"
+      - "4000:443"
+    deploy:
+      resources:
+        limits:
+          cpus: '${APPS_CPUS_LIMIT:-2}'
+          memory: ${APPS_MEMORY_LIMIT:-1G}
+        reservations:
+          cpus: '${APPS_CPUS_RESERVATION:-0.25}'
+          memory: ${APPS_MEMORY_RESERVATION:-256M}
 
-  
   app-echo-sql:
     image: ${DOCKER_IMAGE_PREFIX:-}echo-sql:latest
     restart: unless-stopped
@@ -118,13 +125,23 @@ services:
       - main-network
     depends_on:
       - database-seeder
+    ports:
+      - "3001:80"
+      - "4001:443"
+    deploy:
+      resources:
+        limits:
+          cpus: '${APPS_CPUS_LIMIT:-2}'
+          memory: ${APPS_MEMORY_LIMIT:-1G}
+        reservations:
+          cpus: '${APPS_CPUS_RESERVATION:-0.25}'
+          memory: ${APPS_MEMORY_RESERVATION:-256M}
 
-    
   app-aspnetcore-ef:
     image: ${DOCKER_IMAGE_PREFIX:-}aspnetcore-ef:latest
     restart: unless-stopped
     env_file:
-      - path: .env.app-echo-sql
+      - path: .env.app-aspnetcore-dapper
         required: false
     environment:
       - ConnectionStrings__Default=${ConnectionStrings__Default:?must be set}
@@ -133,9 +150,74 @@ services:
       - main-network
     depends_on:
       - database-seeder
-      
+    ports:
+      - "3002:80"
+      - "4002:443"
+    deploy:
+      resources:
+        limits:
+          cpus: '${APPS_CPUS_LIMIT:-2}'
+          memory: ${APPS_MEMORY_LIMIT:-1G}
+        reservations:
+          cpus: '${APPS_CPUS_RESERVATION:-0.25}'
+          memory: ${APPS_MEMORY_RESERVATION:-256M}
+
+  app-aspnetcore-dapper:
+    image: ${DOCKER_IMAGE_PREFIX:-}aspnetcore-dapper:latest
+    restart: unless-stopped
+    env_file:
+      - path: .env.app-aspnetcore-dapper
+        required: false
+    environment:
+      - ConnectionStrings__Default=${ConnectionStrings__Default:?must be set}
+      - ASPNETCORE_HTTP_PORTS=${ASPNETCORE_HTTP_PORTS:?must be set}
+    networks:
+      - main-network
+    depends_on:
+      - database-seeder
+    ports:
+      - "3003:80"
+      - "4003:443"
+    deploy:
+      resources:
+        limits:
+          cpus: '${APPS_CPUS_LIMIT:-2}'
+          memory: ${APPS_MEMORY_LIMIT:-1G}
+        reservations:
+          cpus: '${APPS_CPUS_RESERVATION:-0.25}'
+          memory: ${APPS_MEMORY_RESERVATION:-256M}
+
+  app-hono-kysely:
+    image: ${DOCKER_IMAGE_PREFIX:-}hono-kysely:latest
+    restart: unless-stopped
+    env_file:
+      - path: .env.app-hono-kysely
+        required: false
+    environment:
+      - DATABASE_HOSTNAME=${DATABASE_HOSTNAME:?must be set}
+      - DATABASE_PORT=${DATABASE_PORT:?must be set}
+      - DATABASE_USERNAME=${DATABASE_USERNAME:?must be set}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD:?must be set}
+      - DATABASE_NAME=${DATABASE_NAME:?must be set}
+    networks:
+      - main-network
+    depends_on:
+      - database-seeder
+    ports:
+      - "3004:80"
+      - "4004:443"
+    deploy:
+      resources:
+        limits:
+          cpus: '${APPS_CPUS_LIMIT:-2}'
+          memory: ${APPS_MEMORY_LIMIT:-1G}
+        reservations:
+          cpus: '${APPS_CPUS_RESERVATION:-0.25}'
+          memory: ${APPS_MEMORY_RESERVATION:-256M}
+
 volumes:
   database-data:
+
 
 networks:
   main-network:

@@ -4,12 +4,20 @@ upstream upstream-app-axum-sqlx {
     server app-axum-sqlx:80;
 }
 
-upstream upstream-aspnetcore-ef {
+upstream upstream-app-aspnetcore-ef {
     server app-aspnetcore-ef:80;
 }
 
-upstream upstream-echo-sql {
+upstream upstream-app-aspnetcore-dapper {
+    server app-aspnetcore-dapper:80;
+}
+
+upstream upstream-app-echo-sql {
     server app-echo-sql:80;
+}
+
+upstream upstream-app-hono-kysely {
+    server app-hono-kysely:80;
 }
 
 upstream upstream-adminer {
@@ -26,26 +34,45 @@ server {
     }
 }
 
-# # App (ASP.NET Core EF)
+# App (ASP.NET Core EF)
 server {
     listen *:80;
     server_name $APP_ASPNETCORE_EF_HOSTNAME;
 
     location / {
-        proxy_pass http://upstream-aspnetcore-ef;
+        proxy_pass http://upstream-app-aspnetcore-ef;
     }
 }
 
-# # App (Echo SQL)
+# App (ASP.NET Core Dapper)
+server {
+    listen *:80;
+    server_name $APP_ASPNETCORE_DAPPER_HOSTNAME;
+
+    location / {
+        proxy_pass http://upstream-app-aspnetcore-dapper;
+    }
+}
+
+# App (Echo SQL)
 server {
     listen *:80;
     server_name $APP_ECHO_SQL_HOSTNAME;
 
     location / {
-        proxy_pass http://upstream-echo-sql;
+        proxy_pass http://upstream-app-echo-sql;
     }
 }
 
+# APP Hono-Kysely
+server {
+    listen *:80;
+    server_name $APP_HONO_KYSELY_HOSTNAME;
+
+    location / {
+        proxy_pass http://upstream-app-hono-kysely;
+    }
+}
 
 
 # Adminer

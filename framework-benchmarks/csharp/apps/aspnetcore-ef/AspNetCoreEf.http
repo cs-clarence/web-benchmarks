@@ -1,6 +1,0 @@
-@AspNetCoreEf_HostAddress = http://localhost:5044
-
-GET {{AspNetCoreEf_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

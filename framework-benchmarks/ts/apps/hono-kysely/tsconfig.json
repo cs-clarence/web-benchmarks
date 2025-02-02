@@ -1,0 +1,9 @@
+{
+    "extends": ["@rencedm112/tsconfig/bundler.json"],
+    "compilerOptions": {
+        "outDir": "./dist",
+        "paths": {
+            "$/*": ["./src/*"]
+        }
+    }
+}

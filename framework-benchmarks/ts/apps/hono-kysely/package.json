@@ -1,0 +1,15 @@
+{
+    "name": "@repo/hono-kysely",
+    "scripts": {
+        "image:build": "with-env -- 'docker build --build-arg PROJECT_PATH=apps/hono-kysely -t ${DOCKER_IMAGE_PREFIX}hono-kysely:latest ../../ -f ../../Dockerfile'",
+        "image:push": "with-env -- 'docker push ${DOCKER_IMAGE_PREFIX}hono-kysely:latest'"
+    },
+    "dependencies": {
+        "hono": "^4.6.20",
+        "kysely": "^0.27.5",
+        "pg": "^8.13.1"
+    },
+    "devDependencies": {
+        "@rencedm112/tsconfig": "^3.0.6"
+    }
+}

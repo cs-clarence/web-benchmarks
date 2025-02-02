@@ -7,14 +7,17 @@
     },
     "workspaces": [
         "setup/*",
-        "framework-benchmarks/rust/*/*",
+        "tests/ts/*",
+        "framework-benchmarks/rs/*/*",
         "framework-benchmarks/go/*/*",
-        "framework-benchmarks/csharp/*/*"
+        "framework-benchmarks/cs/*/*",
+        "framework-benchmarks/ts/*/*"
     ],
     "devDependencies": {
+        "@biomejs/biome": "^1.9.4",
         "@rencedm112/biome-config": "^1.0.0",
-        "turbo": "^2.3.3",
-        "@rencedm112/with-env": "^0.0.43"
+        "@rencedm112/with-env": "^0.0.43",
+        "turbo": "^2.3.3"
     },
     "packageManager": "bun@1.1.42"
 }

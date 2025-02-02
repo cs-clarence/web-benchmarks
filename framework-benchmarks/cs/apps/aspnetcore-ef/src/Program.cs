@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
-
 var connectionString = builder.Configuration.GetConnectionString("Default");
 
 // Configure the database context with EF Core and a connection string
@@ -11,30 +9,28 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 var app = builder.Build();
 
-app.MapGet("/users", async (AppDbContext dbContext) =>
-{
-    var users = await dbContext.Users
-        .AsNoTracking()
-        .Select(user => new
-        {
-            user.UserName,
-            user.EmailAddress,
-            user.FirstName,
-            user.LastName
-        })
-        .ToListAsync();
+app.MapGet("/users",
+    async (AppDbContext dbContext, CancellationToken cancellationToken) =>
+    {
+        var users = await dbContext.Users
+            .Select(user => new
+            {
+                user.UserName,
+                user.EmailAddress,
+                user.FirstName,
+                user.LastName
+            })
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
 
-    return Results.Ok(users);
-});
+        return Results.Ok(users);
+    });
 
 app.Run();
 
-public class AppDbContext : DbContext
+public class AppDbContext(DbContextOptions<AppDbContext> options)
+    : DbContext(options)
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-    {
-    }
-
     public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

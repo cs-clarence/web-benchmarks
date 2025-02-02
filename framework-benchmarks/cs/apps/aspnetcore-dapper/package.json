@@ -1,0 +1,7 @@
+{
+    "name": "@repo/aspnetcore-dapper",
+    "scripts": {
+        "image:build": "with-env -- 'docker build --build-arg PROJECT_PATH=apps/aspnetcore-dapper --build-arg ASSEMBLY_PATH=AspNetCoreDapper.dll -t ${DOCKER_IMAGE_PREFIX}aspnetcore-dapper:latest ../../ -f ../../Dockerfile'",
+        "image:push": "with-env -- 'docker push ${DOCKER_IMAGE_PREFIX}aspnetcore-dapper:latest'"
+    }
+}

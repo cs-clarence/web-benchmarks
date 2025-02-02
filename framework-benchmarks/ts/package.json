@@ -1,0 +1,6 @@
+{
+    "name": "@repo/ts-root",
+    "version": "0.0.0-semantically-released",
+    "scripts": {},
+    "workspaces": ["packages/*", "apps/*"]
+}
